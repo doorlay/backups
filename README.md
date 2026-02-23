@@ -10,4 +10,6 @@ Grant Full Disk Access:
 
 ### Notes
 - stdout is written to `/Users/doorlay/Library/Logs/backups.out.log`
-- stderr is wrriten to `/Users/doorlay/Library/Logs/backups.err.log` 
+- stderr is wrriten to `/Users/doorlay/Library/Logs/backups.err.log`
+- These scripts assume the repo is cloned to `$HOME/Projects/`
+- There are probably other assumptions made in this code that are specific to my setup that will break if you try to run these, YMMV 
