@@ -1,3 +1,4 @@
+cd "$(dirname "$0")"
 DAY="$(date +%F)"
 BACKUPROOT="/srv/backups/.rsync-history/obsidian"
 BACKUPDEST="$BACKUPROOT/$DAY"
