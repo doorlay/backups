@@ -4,7 +4,7 @@ Simple backup orchestrator from my Mac to my homelab, using rsync and macOS's la
 ### Setup
 Run `./bootstrap.sh` to create and load a new launchd configuration. Run this script any time updates are made to the launchd-config file.
  
-Grant Full Disk Access to rsync: 
+Grant Full Disk Access: 
 - Navigate to System Settings → Privacy & Security → Full Disk Access.
 - Click +, then press Cmd+Shift+G and paste the path outputted from `which rsync` and click on the application. Do the same for `/bin/bash` and `/bin/sh`.
 
