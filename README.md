@@ -1,0 +1,13 @@
+### Overview
+This folder contains scripts used to sync files from my mac to my Raspberry Pi in my homelab. Every hour (and on boot), launchd will kick off rsyncs to copy over any updates. 
+
+### Setup
+Run `./bootstrap.sh` to create and load a new launchd configuration. Run this script any time updates are made to the launchd-config file.
+ 
+Grant Full Disk Access to rsync: 
+- Navigate to System Settings → Privacy & Security → Full Disk Access.
+- Click +, then press Cmd+Shift+G and paste the path outputted from `which rsync` and click on the application. Do the same for `/bin/bash` and `/bin/sh`.
+
+### Notes
+- stdout is written to `/Users/doorlay/Library/Logs/backups.out.log`
+- stderr is wrriten to `/Users/doorlay/Library/Logs/backups.err.log` 
