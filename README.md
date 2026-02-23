@@ -1,5 +1,5 @@
 ### Overview
-This folder contains scripts used to sync files from my mac to my Raspberry Pi in my homelab. Every hour (and on boot), launchd will kick off rsyncs to copy over any updates. 
+Simple backup orchestrator from my Mac to my homelab, using rsync and macOS's launchd to sync files every hour (and on boot).
 
 ### Setup
 Run `./bootstrap.sh` to create and load a new launchd configuration. Run this script any time updates are made to the launchd-config file.
