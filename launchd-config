@@ -9,7 +9,7 @@
     <key>ProgramArguments</key>
     <array>
       <string>/bin/bash</string>
-	  <string>/Users/doorlay/Projects/backups/run.sh</string>    
+	  <string>~/Projects/backups/run.sh</string>    
 </array>
 
     <key>RunAtLoad</key>
@@ -20,9 +20,9 @@
     <integer>3600</integer>
 
     <key>StandardOutPath</key>
-    <string>/Users/doorlay/Library/Logs/backups.out.log</string>
+    <string>~/Library/Logs/backups.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/doorlay/Library/Logs/backups.err.log</string>
+    <string>~/Library/Logs/backups.err.log</string>
   </dict>
 </plist>

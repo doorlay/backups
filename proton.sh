@@ -7,5 +7,5 @@ ssh admin@192.168.1.216 "mkdir -p '$BACKUPDEST'"
 
 rsync -a --delete --backup --backup-dir="$BACKUPDEST" --exclude-from="./.exclusions" --itemize-changes \
   -e "ssh" \
-  "/Users/doorlay/Library/CloudStorage/ProtonDrive-nicholas@doorlay.com-folder/Offline/" \
+  "~/Library/CloudStorage/ProtonDrive-nicholas@doorlay.com-folder/Offline/" \
   "admin@192.168.1.216:/srv/backups/proton/"
