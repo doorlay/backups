@@ -1,0 +1,3 @@
+# Only include the stubbed .env file
+*.env
+!stub.env

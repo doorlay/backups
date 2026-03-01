@@ -3,6 +3,11 @@ set -euo pipefail
 
 LABEL="com.doorlay.backups"
 
+# Pull in env vars from .env
+set -o allexport
+source .env
+set +o allexport
+
 # Must be run somewhere inside your git repo
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 if [[ -z "${REPO_ROOT}" ]]; then
@@ -10,7 +15,7 @@ if [[ -z "${REPO_ROOT}" ]]; then
   exit 1
 fi
 
-SRC="${REPO_ROOT}/launchd-config"
+SRC="${REPO_ROOT}/mac/launchd-config"
 DST_DIR="${HOME}/Library/LaunchAgents"
 DST="${DST_DIR}/${LABEL}.plist"
 

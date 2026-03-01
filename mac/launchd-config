@@ -9,9 +9,8 @@
     <key>ProgramArguments</key>
     <array>
       <string>/bin/bash</string>
-	  <string>~/Projects/backups/run.sh</string>    
+	  <string>~/Projects/backups/mac/run.sh</string>    
 </array>
-
     <key>RunAtLoad</key>
     <true/>
 

@@ -14,5 +14,5 @@ if ! /usr/bin/ssh -o BatchMode=yes -o ConnectTimeout=5 "$PI_HOST" "true" >/dev/n
   exit 0
 fi
 
-"$HOME/Projects/backups/obsidian.sh"
-"$HOME/Projects/backups/proton.sh"
+"$HOME/Projects/backups/mac/obsidian.sh"
+"$HOME/Projects/backups/mac/proton.sh"
