@@ -3,10 +3,6 @@ set -euo pipefail
 
 LABEL="com.doorlay.backups"
 
-# Pull in env vars from .env
-set -o allexport
-source .env
-set +o allexport
 
 # Must be run somewhere inside your git repo
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
@@ -15,7 +11,7 @@ if [[ -z "${REPO_ROOT}" ]]; then
   exit 1
 fi
 
-SRC="${REPO_ROOT}/mac/launchd-config"
+SRC="${REPO_ROOT}/client/launchd-config"
 DST_DIR="${HOME}/Library/LaunchAgents"
 DST="${DST_DIR}/${LABEL}.plist"
 
@@ -39,4 +35,4 @@ fi
 # Reload + start new symlinked launchd file
 launchctl unload ~/Library/LaunchAgents/com.doorlay.backups.plist 2>/dev/null || true
 launchctl load   ~/Library/LaunchAgents/com.doorlay.backups.plist
-launchctl start  com.doorlay.run-backups
+launchctl start  com.doorlay.backups

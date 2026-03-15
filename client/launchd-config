@@ -9,7 +9,7 @@
     <key>ProgramArguments</key>
     <array>
       <string>/bin/bash</string>
-	  <string>~/Projects/backups/mac/run.sh</string>    
+	  <string>~/Projects/backups/client/backup</string>
 </array>
     <key>RunAtLoad</key>
     <true/>

@@ -6,6 +6,11 @@ command -v ente >/dev/null 2>&1 || {
   exit 127
 }
 
+# Pull in env vars from .env
+set -o allexport
+source .env
+set +o allexport
+
 # Prevent concurrent runs (cron overlap, manual run, etc.)
 LOCK="/run/lock/ente-cli-export.lock"
 mkdir -p "$(dirname "$LOCK")"

@@ -1,20 +1,53 @@
 ### Overview
-Simple, bespoke backup orchestrator from all my digital things. 
-<!--- Follows 3-2-1 backup rule (three copies, two media types, one off-site)-->
-- Syncs files hourly from my Mac to my homelab
-- Syncs photos hourly from my photo provider's cloud to my homelab
-<!--- Uploads point-in-time encrypted backups to S3 using restic  -->
+Simple backup orchestrator for all my digital things. 
+- Hourly sync from my mac to my server
+- Hourly sync from my photo provider to my server
+- Point-in-time encrypted backups in S3
 
 ### Setup
-Run `cp stub.env .env` and fill out all of the environment variables within `.env`.
+#### Client
+The client portion of the codebase runs on my mac, handling syncing from my mac to my server, kicked off hourly via launchd. Synced files end up in subdirectories inside `/data/backups/` on the server. To setup: 
 
-Run `./bootstrap.sh` to create and load a new launchd configuration. Run this script any time updates are made to the launchd-config file.
- 
-Grant Full Disk Access: 
-- Navigate to System Settings → Privacy & Security → Full Disk Access.
-- Click +, then press Cmd+Shift+G and paste the path outputted from `which rsync` and click on the application. Do the same for `/bin/bash` and `/bin/sh`.
+1. Grant rsync Full Disk Access by navigating to System Settings → Privacy & Security → Full Disk Access. Click +, then press Cmd+Shift+G and paste the path outputted from `which rsync` and click on the application. Do the same for `/bin/bash` and `/bin/sh`.
+2. Add source and destination paths to `client/backups.conf`.
+3. Run `make client`.
 
-Run `ente account add` on your pi.
+#### Server 
+The server portion of the codebase runs on my server, handling syncing from my photo provider to my server, kicked off hourly via systemd. These files end up in `/data/backups/photos/` on the server. To setup:
+
+1. Download the latest Linux ARM64 release from Ente's GitHub:
+```
+wget https://github.com/ente-io/ente/releases/latest/download/ente-linux-arm64 -O ente
+chmod +x ente
+sudo mv ente /usr/local/bin/
+```
+
+2. Create a directory for your backup tool and a .env file. We will use a systemd environment file for the most "Linux-native" approach:
+```
+ENTE_EMAIL=your-email@example.com
+EXPORT_DIR=/mnt/external_drive/ente_photos
+SECRETS_PATH=/home/pi/.ente/secrets.db
+# Optional: comma separated list of album names
+ALBUMS=Family,Vacation
+INCLUDE_HIDDEN=true
+```
+
+To setup the `server` portion:
+3. Since you are on a headless Pi, you must perform the initial login once to generate the secrets file:
+```
+export ENTE_CLI_SECRETS_PATH="/home/pi/.ente/secrets.db"
+ente account login --email your-email@example.com
+```
+
+4. Automate with Systemd:
+```
+```
+- If you haven't already downloaded Golang on your server, do so. If you're on a headless Pi (like myself), the easiest way is to run `wget https://dl.google.com/go/go{}.linux-arm64.tar.gz`, adding the semantic version into the above URL. 
+- Run `cp stub.env .env` and fill out all of the environment variables within `.env`.
+- Run `ente account add` on your pi.
+
+To start the client backups, run `make run-client` on your mac.
+To start the server backups, run `make run-server` on your server.
 
 ### Notes
 - stdout is written to `~/Library/Logs/backups.out.log`
