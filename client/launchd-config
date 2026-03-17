@@ -4,12 +4,14 @@
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>com.doorlay.backups</string>
+	<string>com.doorlay.backups</string>
+
+	<key>WorkingDirectory</key>
+	<string>/Users/doorlay/Projects/backups</string>
 
     <key>ProgramArguments</key>
     <array>
-      <string>/bin/bash</string>
-	  <string>~/Projects/backups/client/backup</string>
+		<string>/Users/doorlay/bin/backups</string>
 </array>
     <key>RunAtLoad</key>
     <true/>
@@ -19,9 +21,9 @@
     <integer>3600</integer>
 
     <key>StandardOutPath</key>
-    <string>~/Library/Logs/backups.out.log</string>
+	<string>/Users/doorlay/Library/Logs/backups.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>~/Library/Logs/backups.err.log</string>
+	<string>/Users/doorlay/Library/Logs/backups.err.log</string>
   </dict>
 </plist>

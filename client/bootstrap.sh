@@ -2,7 +2,7 @@
 set -euo pipefail
 
 LABEL="com.doorlay.backups"
-
+mkdir -p "${HOME}/Library/Logs"
 
 # Must be run somewhere inside your git repo
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"

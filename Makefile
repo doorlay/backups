@@ -1,16 +1,11 @@
+.PHONY: clean client server
+
 clean:
-	rm backup
+	rm backups
 
-client: build-client run-client
-
-build-client:
-	go build -o backup client/main.go 
-
-run-client:
+client: 
+	go build -o ~/bin/backups client/main.go
 	./client/bootstrap.sh
 
-build-server:
-	#
-	
-run-server:
+server:
 	#
