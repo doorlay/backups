@@ -17,6 +17,7 @@ const (
 	lockFileName = "ente-sync.lock"
 	timeout      = 6 * time.Hour
 	ntfyURL      = "https://ntfy.sh"
+	resultsFile  = "/srv/backups/ente-sync-results.log"
 )
 
 func main() {
@@ -78,6 +79,7 @@ func main() {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
+		recordResult("FAIL")
 		if ctx.Err() == context.DeadlineExceeded {
 			notify("ente export timed out after " + timeout.String())
 			log.Fatalf("ente export timed out after %s", timeout)
@@ -86,8 +88,50 @@ func main() {
 		log.Fatalf("ente export failed: %v", err)
 	}
 
+	recordResult("OK")
 	log.Printf("export completed successfully")
-	notify("Ente export completed successfully")
+}
+
+func recordResult(result string) {
+	f, err := os.OpenFile(resultsFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Printf("Failed to write result: %v", err)
+		return
+	}
+	defer f.Close()
+	fmt.Fprintln(f, result)
+
+	if result != "OK" {
+		return
+	}
+
+	data, err := os.ReadFile(resultsFile)
+	if err != nil {
+		return
+	}
+
+	ok, fail := 0, 0
+	for _, line := range strings.Split(strings.TrimSpace(string(data)), "\n") {
+		switch strings.TrimSpace(line) {
+		case "OK":
+			ok++
+		case "FAIL":
+			fail++
+		}
+	}
+
+	if ok < 24 {
+		return
+	}
+
+	total := ok + fail
+	if fail > 0 {
+		notify(fmt.Sprintf("Daily ente summary: %d/%d runs succeeded, %d failed", ok, total, fail))
+	} else {
+		notify(fmt.Sprintf("Daily ente summary: all %d runs succeeded", total))
+	}
+
+	os.Truncate(resultsFile, 0)
 }
 
 func notify(msg string) {
