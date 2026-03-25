@@ -3,5 +3,7 @@ Description=Ente photo export
 
 [Service]
 Type=oneshot
+User=admin
+Environment=HOME=/home/admin
 EnvironmentFile=/srv/backups/server/.env
 ExecStart=/srv/backups/bin/ente-sync
