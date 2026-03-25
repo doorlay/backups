@@ -2,3 +2,4 @@
 *.env
 !stub.env
 backups
+ente-secrets/

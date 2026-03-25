@@ -6,7 +6,6 @@ Simple backup orchestrator for all my digital things.
 - Push notifications for success/errors via ntfy
 
 ### Setup
-#### Client
 The client portion of the codebase runs on my mac, handling syncing from my mac to my server, kicked off hourly via launchd. Synced files end up in subdirectories inside `/data/backups/` on the server. To setup: 
 
 1. Grant rsync Full Disk Access by navigating to System Settings → Privacy & Security → Full Disk Access. Click +, then press Cmd+Shift+G and paste the path outputted from `which rsync` and click on the application. Do the same for `/bin/bash` and `/bin/sh`.
@@ -14,7 +13,6 @@ The client portion of the codebase runs on my mac, handling syncing from my mac 
 3. Run `cd client && cp stub.env .env` and set `NTFY_TOPIC` to a random UUID. Download the ntfy app and subscribe to that UUID.
 4. Run `make client`.
 
-#### Server
 The server portion of the codebase runs on my server, handling syncing from my photo provider (Ente) to my server, kicked off hourly via systemd. These files end up in `/data/backups/photos/` on the server. To setup:
 
 1. Install the Ente CLI:
@@ -26,6 +24,7 @@ sudo mv ente /usr/local/bin/
 2. Install Golang if you haven't already. On a headless Pi, the easiest way is `wget https://dl.google.com/go/go{version}.linux-arm64.tar.gz`.
 3. Perform the initial Ente login to generate the secrets file:
 ```
+mkdir -p /srv/backups/ente-secrets
 export ENTE_CLI_SECRETS_PATH="/srv/backups/ente-secrets/secrets.db"
 ente account add
 ```

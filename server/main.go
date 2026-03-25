@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -13,6 +16,7 @@ import (
 const (
 	lockFileName = "ente-sync.lock"
 	timeout      = 6 * time.Hour
+	ntfyURL      = "https://ntfy.sh"
 )
 
 func main() {
@@ -75,10 +79,27 @@ func main() {
 
 	if err := cmd.Run(); err != nil {
 		if ctx.Err() == context.DeadlineExceeded {
+			notify("ente export timed out after " + timeout.String())
 			log.Fatalf("ente export timed out after %s", timeout)
 		}
+		notify(fmt.Sprintf("ente export failed: %v", err))
 		log.Fatalf("ente export failed: %v", err)
 	}
 
 	log.Printf("export completed successfully")
+	notify("Ente export completed successfully")
+}
+
+func notify(msg string) {
+	ntfyTopic := os.Getenv("NTFY_TOPIC")
+	if ntfyURL == "" || ntfyTopic == "" {
+		return
+	}
+	url := fmt.Sprintf("%s/%s", ntfyURL, ntfyTopic)
+	resp, err := http.Post(url, "text/plain", strings.NewReader(msg))
+	if err != nil {
+		log.Printf("Failed to send notification: %v", err)
+		return
+	}
+	resp.Body.Close()
 }
