@@ -3,7 +3,7 @@ Simple backup orchestrator for all my digital things.
 - Hourly sync from my mac to my server
 - Hourly sync from my photo provider to my server
 - Point-in-time encrypted backups in S3
-- Push notifications for success/errors via ntfy
+- Push notifications for success/errors via ntfy.sh
 
 ### Setup
 The client portion of the codebase runs on my mac, handling syncing from my mac to my server, kicked off hourly via launchd. Synced files end up in subdirectories inside `/data/backups/` on the server. To setup: 
@@ -35,11 +35,12 @@ To start the client backups, run `make client` on your mac to build and install 
 To start the server backups, run `make server` on your server.
 
 ### Development
-- `make build-client` — compile the client binary without deploying to launchd
-- `make run-client` — build and run the client manually (useful for testing changes)
-- `make client` — build and deploy to launchd (runs hourly via `RunAtLoad`)
-- `make build-server` — compile the server binary without deploying to systemd
-- `make server` — build and deploy the systemd service and timer
+- `make build-client`: build the client binary without deploying to launchd
+- `make run-client`: build and run the client binary manually 
+- `make client` - build and deploy the client binary to launchd
+- `make build-server` — build the server binary without deploying to systemd
+- `make server` — build and deploy the server binary to systemd 
+- `sudo systemctl start ente-sync.service` - run the systemd binary manually 
 
 ### Notes
 - Client logs are written to `~/Library/Logs/backups.out.log` and `~/Library/Logs/backups.err.log`
