@@ -16,7 +16,7 @@
     <key>RunAtLoad</key>
     <true/>
 
-    <!-- Every hour (from time of load; not aligned to top-of-hour) -->
+    <!-- Every hour (from time of load) -->
     <key>StartInterval</key>
     <integer>3600</integer>
 

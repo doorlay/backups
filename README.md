@@ -10,7 +10,8 @@ The client portion of the codebase runs on my mac, handling syncing from my mac 
 
 1. Grant rsync Full Disk Access by navigating to System Settings → Privacy & Security → Full Disk Access. Click +, then press Cmd+Shift+G and paste the path outputted from `which rsync` and click on the application. Do the same for `/bin/bash` and `/bin/sh`.
 2. Add source and destination paths to `client/backups.conf`.
-3. Run `make client`.
+3. Run `cd client && cp stub.env .env` and set `NTFY_TOPIC` to a random UUID. Download the ntfy app and subscribe to that UUID.
+4. Run `make client`.
 
 #### Server 
 The server portion of the codebase runs on my server, handling syncing from my photo provider to my server, kicked off hourly via systemd. These files end up in `/data/backups/photos/` on the server. To setup:
@@ -46,11 +47,19 @@ ente account login --email your-email@example.com
 - Run `cp stub.env .env` and fill out all of the environment variables within `.env`.
 - Run `ente account add` on your pi.
 
-To start the client backups, run `make run-client` on your mac.
+To start the client backups, run `make client` on your mac to build and install the launchd agent.
 To start the server backups, run `make run-server` on your server.
+
+### Development
+- `make build-client` — compile the client binary without deploying to launchd
+- `make run-client` — build and run the client manually (useful for testing changes)
+- `make client` — build and deploy to launchd (runs hourly via `RunAtLoad`)
+
+### Notifications
+The client supports push notifications via [ntfy.sh](https://ntfy.sh). Set `NTFY_TOPIC` in `client/.env` to enable (see setup step 3).
 
 ### Notes
 - stdout is written to `~/Library/Logs/backups.out.log`
-- stderr is wrriten to `~/Library/Logs/backups.err.log`
+- stderr is written to `~/Library/Logs/backups.err.log`
 - These scripts assume the repo is cloned to `$HOME/Projects/`
-- There are probably other assumptions made in this code that are specific to my setup that will break if you try to run these, YMMV 
+- There are probably other assumptions made in this code that are specific to my setup that will break if you try to run these, YMMV
