@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"os"
 	"os/exec"
@@ -11,60 +11,74 @@ import (
 )
 
 const (
-	LockFile = "/run/lock/ente-sync.lock"
-	LogFile  = "ente-sync.log"
+	lockFileName = "ente-sync.lock"
+	timeout      = 6 * time.Hour
 )
 
 func main() {
-	// 1. Load and Expand Environment Variables
-	exportDir := os.ExpandEnv(os.Getenv("EXPORT_DIR"))
-	secretsPath := os.ExpandEnv(os.Getenv("SECRETS_PATH"))
-	if exportDir == "" || secretsPath == "" {
-		log.Fatal("EXPORT_DIR and SECRETS_PATH must be set in environment")
+	log.SetFlags(log.LstdFlags)
+
+	lockFile := filepath.Join(os.TempDir(), lockFileName)
+
+	exportDir := os.Getenv("EXPORT_DIR")
+	secretsPath := os.Getenv("SECRETS_PATH")
+
+	if exportDir == "" {
+		log.Fatal("EXPORT_DIR must be set")
 	}
 
-	// 2. Prevent Overlapping Runs
-	file, err := os.OpenFile(LockFile, os.O_CREATE|os.O_RDWR, 0666)
+	if secretsPath == "" {
+		log.Fatal("SECRETS_PATH must be set")
+	}
+
+	// Prevent overlapping runs
+	lockHandle, err := os.OpenFile(lockFile, os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
-		log.Fatalf("Could not create lock file: %v", err)
+		log.Fatalf("failed to open lock file: %v", err)
 	}
-	defer file.Close()
+	defer lockHandle.Close()
 
-	if err := syscall.Flock(int(file.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
-		fmt.Println("Another sync process is already running. Exiting.")
+	if err := syscall.Flock(int(lockHandle.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+		log.Println("another sync process is already running, exiting")
 		os.Exit(0)
 	}
+	defer syscall.Flock(int(lockHandle.Fd()), syscall.LOCK_UN)
 
-	// 3. Setup Environment for Headless Execution
-	// This tells Ente to use a flat file for keys instead of a GUI keyring
-	os.Setenv("ENTE_CLI_SECRETS_PATH", secretsPath)
-	os.MkdirAll(filepath.Dir(secretsPath), 0700)
-
-	// 4. Ensure Export Directory Exists
-	if err := os.MkdirAll(exportDir, 0755); err != nil {
-		log.Fatalf("Failed to create export dir: %v", err)
+	if err := os.MkdirAll(filepath.Dir(secretsPath), 0700); err != nil {
+		log.Fatalf("failed to create secrets directory: %v", err)
 	}
 
-	// 5. Build Ente Arguments
-	args := []string{"export"}
+	if err := os.MkdirAll(exportDir, 0755); err != nil {
+		log.Fatalf("failed to create export directory: %v", err)
+	}
+
+	os.Setenv("ENTE_CLI_SECRETS_PATH", secretsPath)
+
+	args := []string{"export", exportDir}
+
 	if albums := os.Getenv("ALBUMS"); albums != "" {
 		args = append(args, "--albums", albums)
 	}
-	// Note: Ente CLI flags use =true/false or are boolean flags
+
 	if os.Getenv("INCLUDE_HIDDEN") == "true" {
 		args = append(args, "--hidden=true")
 	}
 
-	// 6. Execute Export
-	fmt.Printf("[%s] Starting Ente export...\n", time.Now().Format(time.RFC3339))
+	log.Printf("starting ente export to %s", exportDir)
 
-	cmd := exec.Command("ente", args...)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "ente", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		log.Fatalf("Ente export failed: %v", err)
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Fatalf("ente export timed out after %s", timeout)
+		}
+		log.Fatalf("ente export failed: %v", err)
 	}
 
-	fmt.Printf("[%s] Export completed successfully.\n", time.Now().Format(time.RFC3339))
+	log.Printf("export completed successfully")
 }

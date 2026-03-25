@@ -1,4 +1,4 @@
-.PHONY: clean build-client client run-client server
+.PHONY: clean build-client client run-client build-server server
 
 clean:
 	rm backups
@@ -12,5 +12,10 @@ client: build-client
 run-client: build-client
 	~/bin/backups
 
-server:
-	#
+build-server:
+	go build -o /srv/backups/bin/ente-sync server/main.go
+
+server: build-server
+	sudo cp server/ente-sync.service server/ente-sync.timer /etc/systemd/system/
+	sudo systemctl daemon-reload
+	sudo systemctl enable --now ente-sync.timer

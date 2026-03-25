@@ -1,0 +1,9 @@
+[Unit]
+Description=Run Ente photo export hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target

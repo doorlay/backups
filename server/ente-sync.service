@@ -1,0 +1,7 @@
+[Unit]
+Description=Ente photo export
+
+[Service]
+Type=oneshot
+EnvironmentFile=/srv/backups/server/.env
+ExecStart=/srv/backups/bin/ente-sync
