@@ -29,6 +29,7 @@ export ENTE_CLI_SECRETS_PATH="/srv/backups/ente-secrets/secrets.db"
 ente account add
 ```
 4. Run `cd server && cp stub.env .env` and fill out the environment variables.
+5. Run `mkdir -p /srv/backups/tmp`.     
 5. Run `make server`.
 
 To start the client backups, run `make client` on your mac to build and install the launchd agent.
