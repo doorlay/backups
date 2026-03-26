@@ -28,9 +28,15 @@ mkdir -p /srv/backups/ente-secrets
 export ENTE_CLI_SECRETS_PATH="/srv/backups/ente-secrets/secrets.db"
 ente account add
 ```
-4. Run `cd server && cp stub.env .env` and fill out the environment variables.
-5. Run `mkdir -p /srv/backups/tmp`.     
-5. Run `make server`.
+4. Install restic: `sudo apt install restic`.
+5. Run `cd server && cp stub.env .env` and fill out the environment variables. For restic, set `RESTIC_REPOSITORY` to `s3:s3.amazonaws.com/your-bucket`, along with `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `RESTIC_PASSWORD`.
+6. Initialize the restic repository:
+```
+source /srv/backups/server/.env
+restic init
+```
+7. Run `mkdir -p /srv/backups/tmp`.
+8. Run `make server`.
 
 To start the client backups, run `make client` on your mac to build and install the launchd agent.
 To start the server backups, run `make server` on your server.
@@ -41,11 +47,12 @@ To start the server backups, run `make server` on your server.
 - `make client` - build and deploy the client binary to launchd
 - `make build-server` — build the server binary without deploying to systemd
 - `make server` — build and deploy the server binary to systemd 
-- `sudo systemctl start ente-sync.service` - run the systemd binary manually 
+- `sudo systemctl start ente-sync.service` - run the ente export manually
+- `sudo systemctl start restic-backup.service` - run the restic backup manually
 
 ### Notes
 - Client logs are written to `~/Library/Logs/backups.out.log` and `~/Library/Logs/backups.err.log`
-- Server logs are in journald: `journalctl -u ente-sync.service`
+- Server logs are in journald: `journalctl -u ente-sync.service` and `journalctl -u restic-backup.service`
 - The client assumes the repo is cloned to `$HOME/Projects/` on your mac
 - The server assumes the repo is cloned to `/srv/backups/` on your server
 - There are probably other assumptions made in this code that are specific to my setup that will break if you try to run these, YMMV

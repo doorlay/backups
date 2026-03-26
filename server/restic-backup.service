@@ -1,0 +1,10 @@
+[Unit]
+Description=Restic backup to S3
+
+[Service]
+Type=oneshot
+User=admin
+Environment=HOME=/home/admin
+Environment=TMPDIR=/srv/backups/tmp
+EnvironmentFile=/srv/backups/server/.env
+ExecStart=/bin/bash /srv/backups/server/restic-backup.sh

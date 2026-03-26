@@ -1,0 +1,9 @@
+[Unit]
+Description=Run restic backup daily at 8pm PST
+
+[Timer]
+OnCalendar=*-*-* 20:00:00 America/Los_Angeles
+Persistent=true
+
+[Install]
+WantedBy=timers.target

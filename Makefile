@@ -16,6 +16,7 @@ build-server:
 	go build -o /srv/backups/bin/ente-sync server/main.go
 
 server: build-server
-	sudo cp server/ente-sync.service server/ente-sync.timer /etc/systemd/system/
+	sudo cp server/ente-sync.service server/ente-sync.timer server/restic-backup.service server/restic-backup.timer /etc/systemd/system/
 	sudo systemctl daemon-reload
 	sudo systemctl enable --now ente-sync.timer
+	sudo systemctl enable --now restic-backup.timer
