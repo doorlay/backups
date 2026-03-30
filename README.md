@@ -10,7 +10,7 @@ The client portion of the codebase runs on my mac, handling syncing from my mac 
 
 1. Grant rsync Full Disk Access by navigating to System Settings → Privacy & Security → Full Disk Access. Click +, then press Cmd+Shift+G and paste the path outputted from `which rsync` and click on the application. Do the same for `/bin/bash` and `/bin/sh`.
 2. Add source and destination paths to `client/backups.conf`.
-3. Run `cd client && cp stub.env .env` and set `NTFY_TOPIC` to a random UUID. Download the ntfy app and subscribe to that UUID.
+3. Run `cd client && cp .env.example .env` and set `NTFY_TOPIC` to a random UUID. Download the ntfy app and subscribe to that UUID.
 4. Run `make client`.
 
 The server portion of the codebase runs on my server, handling syncing from my photo provider (Ente) to my server, kicked off hourly via systemd. These files end up in `/data/backups/photos/` on the server. To setup:
@@ -29,7 +29,7 @@ export ENTE_CLI_SECRETS_PATH="/srv/backups/ente-secrets/secrets.db"
 ente account add
 ```
 4. Install restic: `sudo apt install restic`.
-5. Run `cd server && cp stub.env .env` and fill out the environment variables. For restic, set `RESTIC_REPOSITORY` to `s3:s3.amazonaws.com/your-bucket`, along with `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `RESTIC_PASSWORD`.
+5. Run `cd server && cp .env.example .env` and fill out the environment variables. For restic, set `RESTIC_REPOSITORY` to `s3:s3.amazonaws.com/your-bucket`, along with `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `RESTIC_PASSWORD`.
 6. Initialize the restic repository:
 ```
 source /srv/backups/server/.env
